@@ -216,7 +216,7 @@ const path = require('path'); // Ensure this is imported at top, or add here
 app.use(express.static(path.join(__dirname, 'public')));
 
 // 2. If a user asks for any page, send them the React App
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
