@@ -5,7 +5,7 @@ import Lobby from './Lobby';
 import Game from './Game';
 
 // Connect to the backend
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect();
 
 function App() {
   const [isInGame, setInGame] = useState(false);
