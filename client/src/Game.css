@@ -31,7 +31,7 @@
   flex-grow: 1; /* Fill ALL available vertical space */
   width: 95%;
   margin: 10px auto;
-  background: radial-gradient(circle at center, #388e3c, #1b5e20);
+  background-image: radial-gradient(circle at center, #342c4d, #1b5e567a);
   border-radius: 40px;
   border: 12px solid #5d4037;
   box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
