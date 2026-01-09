@@ -1,143 +1,194 @@
 /* client/src/Game.css */
 
-/* THE ROOM */
+/* --- GENERAL SETUP --- */
+body {
+    margin: 0;
+    overflow: hidden; /* Stop scrolling! */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #2e2e2e;
+}
+
 .game-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh; /* Force full screen height */
-  width: 100vw;
-  background-color: #222;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    color: white;
 }
 
-/* TOP BAR */
+/* --- TOP BAR --- */
 .top-bar {
-  background: #1a1a1a;
-  color: white;
-  padding: 0 20px;
-  height: 60px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #444;
-  flex-shrink: 0;
-  z-index: 100;
+    height: 60px;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    z-index: 100;
 }
 
-/* THE TABLE - THIS IS THE CRITICAL FIX */
+/* --- TABLE AREA (The Green Felt) --- */
 .table-area {
-  position: relative; /* Anchor point for everything inside */
-  flex-grow: 1; /* Fill ALL available vertical space */
-  width: 95%;
-  margin: 10px auto;
-  background-image: radial-gradient(circle at center, #342c4d, #1b5e567a);
-  border-radius: 40px;
-  border: 12px solid #5d4037;
-  box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
-  z-index: 0;
+    flex: 1;
+    position: relative;
+    background: radial-gradient(circle, #35654d 0%, #1e3b2f 100%);
+    overflow: hidden;
 }
 
-/* CENTER POT - FORCED TO MIDDLE */
-.center-pot {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Perfectly center it */
-  width: 200px;
-  height: 200px;
-  border: 2px dashed rgba(255,255,255,0.1); /* Faint guide circle */
-  border-radius: 50%;
-  z-index: 10;
-  pointer-events: none;
-  display: flex; /* Helps center content */
-  align-items: center;
-  justify-content: center;
-}
-
-/* PLAYED CARDS IN CENTER */
-.played-card {
-  position: absolute; /* Stack on top of each other */
-  height: clamp(90px, 20vh, 180px); /* Big size */
-  width: auto;
-  border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-  transform-origin: center center;
-}
-
-/* --- SEATS --- */
+/* --- PLAYER SEATS --- */
 .player-seat {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 200px;
-  z-index: 20; /* Above table */
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 120px; /* Default width for desktop */
 }
 
-/* Pushed further to edges to avoid center overlap */
-.seat-bottom { bottom: 0px; left: 50%; transform: translateX(-50%); } 
-.seat-top    { top: 0px;    left: 50%; transform: translateX(-50%); }
-.seat-left   { top: 50%;    left: -40px; transform: translateY(-50%) rotate(90deg); }
-.seat-right  { top: 50%;    right: -40px; transform: translateY(-50%) rotate(-90deg); }
+/* Position the 4 Players */
+.seat-bottom { 
+    bottom: 80px; /* Moved up to make room for chat bar */
+    left: 50%; 
+    transform: translateX(-50%); 
+}
+.seat-top { 
+    top: 20px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+}
+.seat-left { 
+    left: 20px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+}
+.seat-right { 
+    right: 20px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+}
 
-/* HANDS */
+/* --- CARDS & HANDS --- */
 .my-hand {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  height: clamp(100px, 20vh, 180px);
-  margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    /* Negative margin overlaps cards nicely */
+    margin-left: -30px; 
 }
 
 .my-card {
-  height: 100%; /* Fill the hand container */
-  width: auto;
-  border-radius: 8px;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-  margin-left: -50px; /* Overlap */
-  transition: transform 0.2s;
-  cursor: pointer;
+    width: 90px;
+    transition: transform 0.2s, margin 0.2s;
+    cursor: pointer;
+    box-shadow: -2px 2px 5px rgba(0,0,0,0.3);
+    border-radius: 5px;
+    margin-left: -40px; /* Fan effect */
 }
-
-.my-card:first-child { margin-left: 0; }
-
 .my-card:hover {
-  transform: translateY(-40px) scale(1.2); /* Pop up */
-  z-index: 50;
-  border: 2px solid yellow;
+    transform: translateY(-20px);
+    z-index: 10;
 }
 
 .opponent-hand {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    gap: 5px;
 }
-
 .card-back {
-  height: 80px;
-  width: 55px;
-  background-image: url('https://deckofcardsapi.com/static/img/back.png');
-  background-size: cover;
-  border-radius: 4px;
-  margin-left: -35px;
-  box-shadow: -1px 1px 3px rgba(0,0,0,0.3);
+    width: 50px;
+    height: 75px;
+    background: repeating-linear-gradient(
+      45deg,
+      #b71c1c,
+      #b71c1c 10px,
+      #d32f2f 10px,
+      #d32f2f 20px
+    );
+    border: 2px solid white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* INFO BOXES */
 .player-info {
-  background: rgba(0,0,0,0.8);
-  color: white;
-  padding: 5px 15px;
-  border-radius: 10px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 16px;
-  white-space: nowrap;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 5px 10px;
+    border-radius: 15px;
+    text-align: center;
+    margin-top: 5px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .turn-active {
-  border: 2px solid #ffeb3b;
-  color: #ffeb3b;
-  box-shadow: 0 0 10px #ffeb3b;
+    border: 2px solid #ffd700; /* Gold border for active player */
+    box-shadow: 0 0 10px #ffd700;
+}
+
+/* --- CENTER POT (Played Cards) --- */
+.center-pot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    /* Visualize the center area for debugging (optional) */
+    /* border: 1px dashed rgba(255,255,255,0.2); */
+}
+.played-card {
+    position: absolute;
+    width: 80px; /* Standard played card size */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    border-radius: 4px;
+    top: 0; 
+    left: 0;
+}
+
+
+/* --- MOBILE RESPONSIVE RULES (The Fix!) --- */
+@media (max-width: 768px) {
+    
+    /* 1. Make Top Bar Smaller */
+    .top-bar {
+        height: 50px;
+        padding: 0 10px;
+    }
+    .top-bar h2 {
+        font-size: 16px; /* Smaller Title */
+    }
+
+    /* 2. Shrink Opponent Seats */
+    .player-seat {
+        width: 80px; /* Smaller container */
+    }
+    .seat-left { left: 5px; } /* Push closer to edge */
+    .seat-right { right: 5px; }
+    .seat-top { top: 10px; }
+    
+    .player-info {
+        font-size: 12px; /* Smaller text */
+        padding: 2px 6px;
+    }
+
+    /* 3. Shrink Opponent Cards (Backs) */
+    .card-back {
+        width: 30px;
+        height: 45px;
+    }
+
+    /* 4. Fix My Hand (Bottom) */
+    .seat-bottom {
+        bottom: 70px; /* Keep space for chat input */
+        width: 100%; /* Use full width */
+    }
+    .my-card {
+        width: 60px; /* Smaller cards for phone */
+        margin-left: -35px; /* Tighter overlap */
+    }
+    .my-card:hover {
+        transform: translateY(-10px); /* Less hover movement */
+    }
+
+    /* 5. Center Pot Fix */
+    .played-card {
+        width: 60px; /* Smaller played cards */
+    }
 }

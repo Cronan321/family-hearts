@@ -248,7 +248,7 @@ function Game({ socket, username, room, players }) {
             bottom: '10px',
             left: '50%',
             transform: 'translateX(-50%)',
-            width: '300px',
+            width: 'min(300px, 80%',
             zIndex: 100
         }}>
             <form onSubmit={sendMessage}>
