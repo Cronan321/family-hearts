@@ -3,6 +3,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import AudioChat from './AudioChat';
 import './Game.css'; 
 
+// --- SOUND IMPORTS ---
+// Make sure these files exist in client/src/assets/
+import cardSoundFile from './assets/card.wav';
+import shuffleSoundFile from './assets/shuffle.mp3';
+import collectSoundFile from './assets/collect.ogg';
+
 const getCardImage = (suit, value) => {
     let v = value;
     if (value === 11) v = "J";
@@ -22,7 +28,13 @@ function Game({ socket, username, room, players }) {
   
   // --- CHAT STATES ---
   const [chatInput, setChatInput] = useState("");
-  const [bubbles, setBubbles] = useState({}); // Stores active messages: { "Dad": "Hello!" }
+  const [bubbles, setBubbles] = useState({}); 
+
+  // --- AUDIO REFS ---
+  // We create these once so we can reuse them
+  const cardAudio = useRef(new Audio(cardSoundFile));
+  const shuffleAudio = useRef(new Audio(shuffleSoundFile));
+  const collectAudio = useRef(new Audio(collectSoundFile));
 
   const myIndex = players.findIndex(p => p.id === socket.id);
 
@@ -32,6 +44,16 @@ function Game({ socket, username, room, players }) {
       return players[actualIndex];
   };
 
+  // Helper to play sound safely
+  const playSound = (audioRef) => {
+      try {
+          audioRef.current.currentTime = 0; // Rewind to start
+          audioRef.current.play();
+      } catch (e) {
+          console.error("Audio play failed (user interaction needed first?)", e);
+      }
+  };
+
   // --- SOCKET LISTENERS ---
   useEffect(() => {
     socket.on('game_started', (data) => {
@@ -39,28 +61,36 @@ function Game({ socket, username, room, players }) {
         setMyHand(data.hand);
         setTurnIndex(data.turnIndex);
         setBoard([]);
+        
+        // Play Shuffle Sound!
+        playSound(shuffleAudio);
     });
+
     socket.on('hand_update', (newHand) => setMyHand(newHand));
+
     socket.on('state_update', (data) => {
         setBoard(data.board);
         setTurnIndex(data.turnIndex);
-    });
-    socket.on('trick_finished', (data) => setScores(data.scores));
 
-    // LISTENER: When a message arrives, show a bubble!
+        // If a card was just added to the board, play the "Snap" sound
+        if (data.board.length > 0) {
+            playSound(cardAudio);
+        }
+    });
+
+    socket.on('trick_finished', (data) => {
+        setScores(data.scores);
+        // Play "Collect" sound (chips/slide)
+        playSound(collectAudio);
+    });
+
     socket.on('receive_message', (data) => {
         const { author, message } = data;
-        
-        // 1. Show the bubble
         setBubbles(prev => ({ ...prev, [author]: message }));
-
-        // 2. Remove it after 4 seconds
         setTimeout(() => {
             setBubbles(prev => {
                 const newState = { ...prev };
-                if (newState[author] === message) {
-                    delete newState[author]; // Only delete if it hasn't been replaced by a newer msg
-                }
+                if (newState[author] === message) delete newState[author];
                 return newState;
             });
         }, 4000);
@@ -80,6 +110,7 @@ function Game({ socket, username, room, players }) {
   const playCard = (card) => {
     if (turnIndex !== myIndex) return;
     socket.emit('play_card', { room, card, playerIndex: myIndex });
+    // Sound plays via 'state_update' listener automatically
   };
 
   // --- SENDING MESSAGES ---
@@ -92,9 +123,8 @@ function Game({ socket, username, room, players }) {
             message: chatInput,
         };
         socket.emit("send_message", messageData);
-        setChatInput(""); // Clear input
+        setChatInput(""); 
         
-        // Show my own bubble immediately (optional, but feels faster)
         setBubbles(prev => ({ ...prev, [username]: chatInput }));
         setTimeout(() => {
              setBubbles(prev => {
@@ -113,17 +143,15 @@ function Game({ socket, username, room, players }) {
       const isMyTurn = players.indexOf(player) === turnIndex;
       const playerScore = scores.find(s => s.name === player.name)?.score || 0;
       const isMe = offset === 0;
-      
-      // Check if this player has an active bubble
       const activeMessage = bubbles[player.name];
 
       return (
           <div className={`player-seat seat-${positionName}`}>
-              {/* --- SPEECH BUBBLE --- */}
+              {/* SPEECH BUBBLE */}
               {activeMessage && (
                   <div style={{
                       position: 'absolute',
-                      top: '-60px', // Float above their head
+                      top: '-60px',
                       left: '50%',
                       transform: 'translateX(-50%)',
                       background: 'white',
@@ -135,11 +163,10 @@ function Game({ socket, username, room, players }) {
                       boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
                       zIndex: 200,
                       whiteSpace: 'nowrap',
-                      pointerEvents: 'none', // Lets clicks pass through
-                      animation: 'popIn 3.0s ease-out'
+                      pointerEvents: 'none',
+                      animation: 'popIn 0.3s ease-out'
                   }}>
                       {activeMessage}
-                      {/* Little triangle arrow pointing down */}
                       <div style={{
                           position: 'absolute',
                           bottom: '-8px',
@@ -152,7 +179,7 @@ function Game({ socket, username, room, players }) {
                   </div>
               )}
 
-              {/* THE HAND */}
+              {/* HAND */}
               {isMe ? (
                   <div className="my-hand">
                       {myHand.map((c, i) => (
@@ -182,8 +209,6 @@ function Game({ socket, username, room, players }) {
 
   return (
     <div className="game-container">
-      
-      {/* TOP BAR */}
       <div className="top-bar">
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
             <h2>♥ Family Hearts</h2>
@@ -192,10 +217,7 @@ function Game({ socket, username, room, players }) {
           </div>
       </div>
 
-      {/* THE TABLE */}
       <div className="table-area">
-        
-        {/* WAITING SCREEN */}
         {gameStatus === "WAITING" && (
             <div style={{ textAlign: 'center', marginTop: '150px', color: 'white' }}>
                 <h1>Waiting for Family...</h1>
@@ -204,7 +226,6 @@ function Game({ socket, username, room, players }) {
             </div>
         )}
 
-        {/* PLAYING SCREEN */}
         {gameStatus === "PLAYING" && (
             <>
                 {renderSeat("bottom", 0)}
@@ -212,12 +233,10 @@ function Game({ socket, username, room, players }) {
                 {renderSeat("top", 2)}
                 {renderSeat("right", 3)}
 
-                {/* CENTER POT */}
                 <div className="center-pot">
                     {board.map((item, i) => {
                         const ownerIndex = players.findIndex(p => p.name === item.player);
                         const relativePos = (ownerIndex - myIndex + 4) % 4;
-                        
                         let rotation = 0;
                         let translate = "0px, 0px";
                         
@@ -242,13 +261,12 @@ function Game({ socket, username, room, players }) {
             </>
         )}
 
-        {/* --- NEW CHAT INPUT BAR (Bottom Center) --- */}
         <div style={{
             position: 'absolute',
             bottom: '10px',
             left: '50%',
             transform: 'translateX(-50%)',
-            width: 'min(300px, 80%',
+            width: 'min(300px, 80%)',
             zIndex: 100
         }}>
             <form onSubmit={sendMessage}>
