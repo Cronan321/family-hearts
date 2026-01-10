@@ -31,7 +31,7 @@ body {
 .table-area {
     flex: 1;
     position: relative;
-    background: radial-gradient(circle, #35654d 0%, #1e3b2f 100%);
+    background: radial-gradient(circle, #7c7d7d76 0%, #0f045e 100%);
     overflow: hidden;
 }
 
@@ -42,7 +42,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 120px; /* Default width for desktop */
+    width: 80px; /* Default width for desktop */
 }
 
 /* Position the 4 Players */
@@ -76,7 +76,7 @@ body {
 }
 
 .my-card {
-    width: 90px;
+    width: 60px;
     transition: transform 0.2s, margin 0.2s;
     cursor: pointer;
     box-shadow: -2px 2px 5px rgba(0,0,0,0.3);
@@ -135,7 +135,7 @@ body {
 }
 .played-card {
     position: absolute;
-    width: 80px; /* Standard played card size */
+    width: 60px; /* Standard played card size */
     box-shadow: 0 4px 8px rgba(0,0,0,0.4);
     border-radius: 4px;
     top: 0; 
@@ -157,7 +157,7 @@ body {
 
     /* 2. Shrink Opponent Seats */
     .player-seat {
-        width: 80px; /* Smaller container */
+        width: 60px; /* Smaller container */
     }
     .seat-left { left: 5px; } /* Push closer to edge */
     .seat-right { right: 5px; }
