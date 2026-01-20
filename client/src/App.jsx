@@ -72,7 +72,7 @@ function App() {
                 gap: '15px'
             }}>
                 <h1 style={{ 
-                    fontSize: '2rem', // Big readable title
+                    fontSize: 'clamp(1.5rem, 5vw, 2.5rem)', // Responsive font size
                     margin: '0 0 5px 0',
                     fontWeight: '800',
                     letterSpacing: '1px'
@@ -81,7 +81,7 @@ function App() {
                 </h1>
                 
                 <p style={{ 
-                    fontSize: '1rem', 
+                    fontSize: 'clamp(0.85rem, 3vw, 1.1rem)', // Responsive font size
                     margin: '0 0 20px 0', 
                     opacity: 0.8,
                     color: '#ddd'
@@ -126,18 +126,22 @@ function App() {
                 <button 
                     onClick={joinRoom}
                     style={{
-                        padding: '18px', // Very easy to tap
-                        fontSize: '18px',
+                        padding: 'clamp(12px, 3vw, 18px)', // Touch-friendly, responsive
+                        fontSize: 'clamp(14px, 3vw, 18px)',
                         fontWeight: 'bold',
-                        background: 'linear-gradient(135deg, #4caf50 0%, #2e7d32 100%)', // Nice gradient
+                        background: 'linear-gradient(135deg, #4caf50 0%, #2e7d32 100%)',
                         color: 'white',
                         border: 'none',
                         borderRadius: '12px',
                         cursor: 'pointer',
                         marginTop: '10px',
                         boxShadow: '0 4px 15px rgba(76, 175, 80, 0.4)',
-                        letterSpacing: '1px'
+                        letterSpacing: '1px',
+                        minHeight: '44px', // Apple's recommended touch target size
+                        transition: 'transform 0.1s, box-shadow 0.1s'
                     }}
+                    onTouchStart={(e) => e.target.style.transform = 'scale(0.98)'}
+                    onTouchEnd={(e) => e.target.style.transform = 'scale(1)'}
                 >
                     ENTER LOBBY
                 </button>

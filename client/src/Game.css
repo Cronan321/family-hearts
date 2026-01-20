@@ -160,11 +160,36 @@ body {
 }
 
 
-/* --- MOBILE RULES --- */
+/* --- TABLET RULES (769px - 1024px) --- */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .top-bar { height: 55px; }
+    .top-bar h2 { font-size: 18px; }
+    
+    .my-card {
+        width: 75px;
+        margin-left: -45px;
+    }
+    .my-card:hover {
+        transform: translateY(-25px);
+    }
+    
+    .card-back { width: 38px; height: 58px; }
+    .player-seat { width: 85px; }
+    .player-info { font-size: 12px; }
+    .played-card { width: 70px; }
+}
+
+/* --- MOBILE RULES (max 768px) --- */
 @media (max-width: 768px) {
     
-    .top-bar { height: 50px; }
-    .top-bar h2 { font-size: 16px; margin: 0; }
+    .top-bar { 
+        height: 50px; 
+        padding: 0 5px;
+    }
+    .top-bar h2 { 
+        font-size: 14px; 
+        margin: 0; 
+    }
 
     .seat-left { left: 2px; }
     .seat-right { right: 2px; }
@@ -173,23 +198,80 @@ body {
     /* Shrink opponents on phone */
     .card-back { width: 30px; height: 45px; }
     .player-seat { width: 70px; }
-    .player-info { font-size: 11px; padding: 2px 4px; }
+    .player-info { font-size: 10px; padding: 2px 4px; }
 
-    /* Shrink Hand for Phones */
+    /* Shrink Hand for Phones with better overflow handling */
+    .my-hand {
+        padding: 0 5px;
+        gap: 0;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+    
     .my-card {
-        width: 65px; /* Narrower */
-        margin-left: -40px; /* Tighter Squeeze */
+        width: 60px; /* Narrower */
+        margin-left: -35px; /* Less aggressive overlap */
+        flex-shrink: 0;
+        min-width: 60px;
     }
     .my-card:first-child {
-        margin-left: 0;
+        margin-left: 5px;
     }
     
     .my-card:hover {
-        transform: translateY(-15px);
+        transform: translateY(-12px);
         z-index: 100;
     }
 
     .played-card {
-        width: 60px; /* Smaller played cards */
+        width: 55px; /* Smaller played cards */
+    }
+    
+    .center-pot {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+/* --- SMALL PHONE RULES (max 480px) --- */
+@media (max-width: 480px) {
+    .top-bar {
+        height: 45px;
+    }
+    .top-bar h2 {
+        font-size: 12px;
+        margin: 0;
+    }
+    
+    .player-info {
+        font-size: 9px;
+        padding: 1px 3px;
+    }
+    
+    .card-back { 
+        width: 25px; 
+        height: 38px; 
+    }
+    
+    .my-card {
+        width: 50px;
+        margin-left: -28px;
+    }
+    .my-card:first-child {
+        margin-left: 3px;
+    }
+    
+    .my-card:hover {
+        transform: translateY(-10px);
+    }
+    
+    .played-card {
+        width: 48px;
+    }
+    
+    .center-pot {
+        width: 60px;
+        height: 60px;
     }
 }
