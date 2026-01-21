@@ -1,42 +1,85 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+:root {
+  --card-width: 10vh; /* Cards resize based on screen height */
+  --card-ratio: 1.4;
+  --felt-red: #330202;
+}
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100dvh; /* Dynamic height for mobile bars */
+  overflow: hidden; /* Prevents "pull to refresh" on mobile */
+  background-color: var(--felt-red);
+  font-family: 'Arial', sans-serif;
+  color: white;
+  user-select: none; /* Prevents text highlighting on double tap */
+}
+/* The Red Felt Board */
+.game-board {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* ---Player Positions (The Normalized Positions)--- */
+.player-area {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+.player-bottom { bottom: 2%; width: 100%; height: 25%; } /* You */
+.player-top { top: 2%; width: 100%; } /* Partner/Opponent */
+.player-left { left: 2%; height: 100%; flex-direction: column; }
+.player-right { right: 2%; height: 100%; flex-direction: column; }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* --- Your Hand (Fan Effect) --- */
+.my-hand {
+  display: flex;
+  gap: -30px; /* Overlap cards like a real hand */
 }
 
 .card {
-  padding: 2em;
+  width: var(--card-width);
+  height: calc(var(--card-width) * var(--card-ratio));
+  background: white;
+  border-radius: 8px;
+  box-shadow: -2px 2px 5px rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: black;
+  cursor: pointer;
+  transition: transform 0.2s;
+  border: 1px solid #ccc;
 }
 
-.read-the-docs {
-  color: #888;
+.card.red { color: #d40000;}
+/* Select card on tap/hover */
+.card:hover, .card.selected {
+  transform: translateY(-20px);
+  z-index: 10;
+}
+
+/* --- Mobile Landscape Warning --- */
+@media (orientation: portrait) {
+  .game-board { display: none; }
+  .mobile-warning {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    background: #222;
+  }
+}
+
+@media (orientation: landscape) {
+  .mobile-warning { display: none; }
 }
